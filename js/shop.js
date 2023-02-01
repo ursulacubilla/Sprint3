@@ -1,6 +1,6 @@
 // If you have time, you can move this variable "products" to a json or js file and load the data in this js. It will look more professional
 var products = [
-   {
+    {
         id: 1,
         name: 'cooking oil',
         price: 10.5,
@@ -75,13 +75,14 @@ var total = 0;
 function buy(id) {
     // 1. Loop for to the array products to get the item to add to cart
     // 2. Add found product to the cartList array
-    for(let i = 0; i < products.length; i++) {
-       if(products[i].id === id) {
-        cartList.push(products[i]);
-        console.log(cartList);
-       }
+    for (let i = 0; i < products.length; i++) {
+        if (products[i].id === id) {
+            cartList.push(products[i]);
+            console.log(cartList);
+        }
     }
     calculateTotal();
+    applyPromotionsCart(cart);
 }
 
 // Exercise 2
@@ -99,11 +100,11 @@ function calculateTotal() {
 
     total = 0;
 
-    for(let i = 0; i < cartList.length; i++) {
-               total += cartList[i].price;
-            }
-            console.log(total);
-        document.getElementById("total_price").innerHTML = total;
+    for (let i = 0; i < cartList.length; i++) {
+        total += cartList[i].price;
+    }
+    console.log(total);
+    document.getElementById("total_price").innerHTML = total;
 }
 
 // Exercise 4
@@ -112,27 +113,40 @@ function generateCart() {
     // generate the "cart" array that does not contain repeated items, instead each item of this array "cart" shows the quantity of product.
 
     cart = [];
-    let quantity = 1;
+    // let quantity = 1;
 
-    // for(let i = 0; i < cartList.length; i++) {
-    //     if (cartList[i].id === id) {
-    //         cart.push(cartList[i]);
+    // cartList.map((elemento, quantity) => ({quantity: 1}));
 
-    //     }
-    // }
-    console.log(cartList);
+    for (let i = 0; i < cartList.length; i++) {
+        // for(let j = 0; j <= cartList[i].id; j++) {
+        // }
+
+        const productExist = cart.find(product => product.id === cartList[i].id);
+
+
+        if (!productExist) {
+            cart.push({ ...cartList[i], quantity: 1, subtotal: cartList[i].price, subtotalWithDiscount: 0 });
+            console.log(cart);
+
+        } else {
+            productExist.quantity++;
+        }
+
+    }
+    return cart;
 
 }
-
+applyPromotionsCart();
 // Exercise 5
 function applyPromotionsCart() {
     // Apply promotions to each item in the array "cart"
+    
 }
 
 // Exercise 6
 function printCart() {
     // Fill the shopping cart modal manipulating the shopping cart dom
-
+    // cartModal esto debe mostrar el carrito de compras.
 }
 
 
@@ -151,8 +165,8 @@ function removeFromCart(id) {
     // 2. Add found product to the cartList array
 }
 
-function open_modal(){
-	console.log("Open Modal");
-	printCart();
+function open_modal() {
+    console.log("Open Modal");
+    printCart();
     generateCart();
 }
