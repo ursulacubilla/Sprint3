@@ -75,6 +75,7 @@ var total = 0;
 function buy(id) {
     // 1. Loop for to the array products to get the item to add to cart
     // 2. Add found product to the cartList array
+
     for (let i = 0; i < products.length; i++) {
         if (products[i].id === id) {
             cartList.push(products[i]);
@@ -88,9 +89,6 @@ function buy(id) {
 // Exercise 2
 function cleanCart() {
     cartList.length = 0;
-
-    //esta es otra forma de limpiar un arreglo
-    // cartList = [];
     console.log(cartList);
 }
 
@@ -103,8 +101,8 @@ function calculateTotal() {
     for (let i = 0; i < cartList.length; i++) {
         total += cartList[i].price;
     }
-    console.log(total);
-    document.getElementById("total_price").innerHTML = total;
+    return total;
+    // document.getElementById("total_price").innerHTML = total;
 }
 
 // Exercise 4
@@ -113,40 +111,102 @@ function generateCart() {
     // generate the "cart" array that does not contain repeated items, instead each item of this array "cart" shows the quantity of product.
 
     cart = [];
-    // let quantity = 1;
-
-    // cartList.map((elemento, quantity) => ({quantity: 1}));
+    calculateTotal();
 
     for (let i = 0; i < cartList.length; i++) {
-        // for(let j = 0; j <= cartList[i].id; j++) {
-        // }
 
         const productExist = cart.find(product => product.id === cartList[i].id);
 
-
         if (!productExist) {
-            cart.push({ ...cartList[i], quantity: 1, subtotal: cartList[i].price, subtotalWithDiscount: 0 });
+            cart.push({ ...cartList[i], quantity: 1, subtotal: cartList[i].price, subtotalWithDiscount: cartList[i].price });
             console.log(cart);
-
         } else {
             productExist.quantity++;
+            productExist.subtotal = productExist.price * productExist.quantity;
         }
-
     }
     return cart;
-
 }
-applyPromotionsCart();
+
 // Exercise 5
 function applyPromotionsCart() {
     // Apply promotions to each item in the array "cart"
     
+    for(let i = 0; i < cart.length; i++) {
+        if(cart[i].id === 1 && cart[i].quantity >= 3) {
+            cart[i].subtotalWithDiscount = cart[i].quantity * 10;
+        } else if(cart[i].id === 3 && cart[i].quantity >= 10) {
+            cart[i].subtotalWithDiscount = cart[i].quantity * 2/3;
+        // ver con juanito si esta bien. no entiendo el 2/3 como funciona :/ me da un subtotal con descuento pero no se calcularlo en la calculadora para ver si esta correcto :))))))
+        } else {
+            cart[i].subtotalWithDiscount = cart[i].subtotal;
+        }
+    } 
 }
 
 // Exercise 6
 function printCart() {
     // Fill the shopping cart modal manipulating the shopping cart dom
-    // cartModal esto debe mostrar el carrito de compras.
+    buy();
+    generateCart();
+    //id = cartModal;
+    const myCart = document.getElementById("cartModal");
+
+    
+    // console.log(myCart.innerHTML);
+
+    const myHtml = `  
+    <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-cart-arrow-down"></i> My Cart</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+			  <div class="modal-body">
+				  <h3 class="text-center bill px-5">Shopping Cart</h3>
+				  <table class="table">
+					<thead>
+						<tr>
+						  <th scope="col">Product</th>
+						  <th scope="col">Price</th>
+						  <th scope="col">Qty.</th>
+						  <th scope="col">Total <small>(with discount)</small></th>
+						</tr>
+					  </thead>
+
+					  <tbody id="cart_list">
+						<tr>
+						  <th scope="row">${cart.name}</th>
+						  <td>${cart.price}</td>
+						  <td>${cart.quantity}</td>
+						  <td>${cart.subtotal}</td>
+						</tr>
+						<tr>
+						  <th scope="row">Pasta</th>
+						  <td>$6.25</td>
+						  <td>1</td>
+						  <td>$6.25</td>
+						</tr>
+						<tr>
+						  <th scope="row">Lawn dress</th>
+						  <td>$15</td>
+						  <td>3</td>
+						  <td>$45</td>
+						</tr>
+					  </tbody>
+				  </table>
+				  <div class="text-center fs-3">
+					Total: $<span id="total_price">${cart.subtotalWithDiscount}</span>
+				  </div>
+				  <div class="text-center"> 
+					<a href="checkout.html" class="btn btn-primary m-3">Checkout</a>
+					<a href="javascript:void(0)" onclick="cleanCart()" class="btn btn-primary m-3">Clean Cart</a>
+				  </div>
+			  </div>
+			</div>
+		  </div>`;
+          
+           myCart.innerHTML = myHtml;
 }
 
 
@@ -169,4 +229,5 @@ function open_modal() {
     console.log("Open Modal");
     printCart();
     generateCart();
+    applyPromotionsCart();
 }
