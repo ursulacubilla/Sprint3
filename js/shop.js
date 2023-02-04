@@ -82,8 +82,6 @@ function buy(id) {
             console.log(cartList);
         }
     }
-    calculateTotal();
-    applyPromotionsCart(cart);
 }
 
 // Exercise 2
@@ -101,8 +99,8 @@ function calculateTotal() {
     for (let i = 0; i < cartList.length; i++) {
         total += cartList[i].price;
     }
+    
     return total;
-    // document.getElementById("total_price").innerHTML = total;
 }
 
 // Exercise 4
@@ -111,7 +109,6 @@ function generateCart() {
     // generate the "cart" array that does not contain repeated items, instead each item of this array "cart" shows the quantity of product.
 
     cart = [];
-    calculateTotal();
 
     for (let i = 0; i < cartList.length; i++) {
 
@@ -136,8 +133,7 @@ function applyPromotionsCart() {
         if(cart[i].id === 1 && cart[i].quantity >= 3) {
             cart[i].subtotalWithDiscount = cart[i].quantity * 10;
         } else if(cart[i].id === 3 && cart[i].quantity >= 10) {
-            cart[i].subtotalWithDiscount = cart[i].quantity * 2/3;
-        // ver con juanito si esta bien. no entiendo el 2/3 como funciona :/ me da un subtotal con descuento pero no se calcularlo en la calculadora para ver si esta correcto :))))))
+            cart[i].subtotalWithDiscount = cart[i].quantity * cart[i].price * 2/3;
         } else {
             cart[i].subtotalWithDiscount = cart[i].subtotal;
         }
@@ -147,66 +143,29 @@ function applyPromotionsCart() {
 // Exercise 6
 function printCart() {
     // Fill the shopping cart modal manipulating the shopping cart dom
-    buy();
+
     generateCart();
-    //id = cartModal;
-    const myCart = document.getElementById("cartModal");
+    applyPromotionsCart();
 
+    const myTable = document.getElementById("cart_list");
+    let myHtml = "";
+    let total = 0;
     
-    // console.log(myCart.innerHTML);
+    console.log(cart);
+    for(let i = 0; i < cart.length; i++) {
 
-    const myHtml = `  
-    <div class="modal-dialog">
-			<div class="modal-content">
-			  <div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-cart-arrow-down"></i> My Cart</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			  </div>
-			  <div class="modal-body">
-				  <h3 class="text-center bill px-5">Shopping Cart</h3>
-				  <table class="table">
-					<thead>
-						<tr>
-						  <th scope="col">Product</th>
-						  <th scope="col">Price</th>
-						  <th scope="col">Qty.</th>
-						  <th scope="col">Total <small>(with discount)</small></th>
-						</tr>
-					  </thead>
-
-					  <tbody id="cart_list">
-						<tr>
-						  <th scope="row">${cart.name}</th>
-						  <td>${cart.price}</td>
-						  <td>${cart.quantity}</td>
-						  <td>${cart.subtotal}</td>
-						</tr>
-						<tr>
-						  <th scope="row">Pasta</th>
-						  <td>$6.25</td>
-						  <td>1</td>
-						  <td>$6.25</td>
-						</tr>
-						<tr>
-						  <th scope="row">Lawn dress</th>
-						  <td>$15</td>
-						  <td>3</td>
-						  <td>$45</td>
-						</tr>
-					  </tbody>
-				  </table>
-				  <div class="text-center fs-3">
-					Total: $<span id="total_price">${cart.subtotalWithDiscount}</span>
-				  </div>
-				  <div class="text-center"> 
-					<a href="checkout.html" class="btn btn-primary m-3">Checkout</a>
-					<a href="javascript:void(0)" onclick="cleanCart()" class="btn btn-primary m-3">Clean Cart</a>
-				  </div>
-			  </div>
-			</div>
-		  </div>`;
-          
-           myCart.innerHTML = myHtml;
+        myHtml += `
+        <tr>
+            <th scope="row">${cart[i].name}</th>
+            <td>${cart[i].price}</td>
+            <td>${cart[i].quantity}</td>
+            <td>${cart[i].subtotalWithDiscount}</td>
+        </tr>
+        `;
+        total += cart[i].subtotalWithDiscount;
+    }
+    document.getElementById("total_price").innerHTML = total;
+    myTable.innerHTML = myHtml;  
 }
 
 
