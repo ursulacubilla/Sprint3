@@ -1,6 +1,6 @@
 // If you have time, you can move this variable "products" to a json or js file and load the data in this js. It will look more professional
 var products = [
-   {
+    {
         id: 1,
         name: 'cooking oil',
         price: 10.5,
@@ -75,21 +75,18 @@ var total = 0;
 function buy(id) {
     // 1. Loop for to the array products to get the item to add to cart
     // 2. Add found product to the cartList array
-    for(let i = 0; i < products.length; i++) {
-       if(products[i].id === id) {
-        cartList.push(products[i]);
-        console.log(cartList);
-       }
+
+    for (let i = 0; i < products.length; i++) {
+        if (products[i].id === id) {
+            cartList.push(products[i]);
+            console.log(cartList);
+        }
     }
-    calculateTotal();
 }
 
 // Exercise 2
 function cleanCart() {
     cartList.length = 0;
-
-    //esta es otra forma de limpiar un arreglo
-    // cartList = [];
     console.log(cartList);
 }
 
@@ -99,11 +96,11 @@ function calculateTotal() {
 
     total = 0;
 
-    for(let i = 0; i < cartList.length; i++) {
-               total += cartList[i].price;
-            }
-            console.log(total);
-        document.getElementById("total_price").innerHTML = total;
+    for (let i = 0; i < cartList.length; i++) {
+        total += cartList[i].price;
+    }
+    
+    return total;
 }
 
 // Exercise 4
@@ -112,27 +109,63 @@ function generateCart() {
     // generate the "cart" array that does not contain repeated items, instead each item of this array "cart" shows the quantity of product.
 
     cart = [];
-    let quantity = 1;
 
-    // for(let i = 0; i < cartList.length; i++) {
-    //     if (cartList[i].id === id) {
-    //         cart.push(cartList[i]);
+    for (let i = 0; i < cartList.length; i++) {
 
-    //     }
-    // }
-    console.log(cartList);
+        const productExist = cart.find(product => product.id === cartList[i].id);
 
+        if (!productExist) {
+            cart.push({ ...cartList[i], quantity: 1, subtotal: cartList[i].price, subtotalWithDiscount: cartList[i].price });
+            console.log(cart);
+        } else {
+            productExist.quantity++;
+            productExist.subtotal = productExist.price * productExist.quantity;
+        }
+    }
+    return cart;
 }
 
 // Exercise 5
 function applyPromotionsCart() {
     // Apply promotions to each item in the array "cart"
+    
+    for(let i = 0; i < cart.length; i++) {
+        if(cart[i].id === 1 && cart[i].quantity >= 3) {
+            cart[i].subtotalWithDiscount = cart[i].quantity * 10;
+        } else if(cart[i].id === 3 && cart[i].quantity >= 10) {
+            cart[i].subtotalWithDiscount = cart[i].quantity * cart[i].price * 2/3;
+        } else {
+            cart[i].subtotalWithDiscount = cart[i].subtotal;
+        }
+    } 
 }
 
 // Exercise 6
 function printCart() {
     // Fill the shopping cart modal manipulating the shopping cart dom
 
+    generateCart();
+    applyPromotionsCart();
+
+    const myTable = document.getElementById("cart_list");
+    let myHtml = "";
+    let total = 0;
+    
+    console.log(cart);
+    for(let i = 0; i < cart.length; i++) {
+
+        myHtml += `
+        <tr>
+            <th scope="row">${cart[i].name}</th>
+            <td>${cart[i].price}</td>
+            <td>${cart[i].quantity}</td>
+            <td>${cart[i].subtotalWithDiscount}</td>
+        </tr>
+        `;
+        total += cart[i].subtotalWithDiscount;
+    }
+    document.getElementById("total_price").innerHTML = total;
+    myTable.innerHTML = myHtml;  
 }
 
 
@@ -151,8 +184,9 @@ function removeFromCart(id) {
     // 2. Add found product to the cartList array
 }
 
-function open_modal(){
-	console.log("Open Modal");
-	printCart();
+function open_modal() {
+    console.log("Open Modal");
+    printCart();
     generateCart();
+    applyPromotionsCart();
 }
